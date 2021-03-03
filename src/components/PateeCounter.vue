@@ -5,6 +5,23 @@ import { reactifyObject, useCounter } from '@vueuse/core';
 import useAudio from '@/lib/useAudio';
 import en2mmNum from '@/lib/en2mmNum';
 
+const isProd = process.env.NODE_ENV === 'production';
+
+const audioUrls = {
+  clickSound: {
+    dev:
+      'https://githubraw.com/wai-lin/patee/gh-pages/audio/mixkit-mouse-click-close-1113.mp3',
+    prod:
+      'https://cdn.githubraw.com/wai-lin/patee/gh-pages/audio/mixkit-mouse-click-close-1113.mp3',
+  },
+  finishSound: {
+    dev:
+      'https://githubraw.com/wai-lin/patee/gh-pages/audio/mixkit-positive-interface-click-1112.mp3',
+    prod:
+      'https://cdn.githubraw.com/wai-lin/patee/gh-pages/audio/mixkit-positive-interface-click-1112.mp3',
+  },
+};
+
 export default defineComponent({
   name: 'PateeCounter',
   props: {
@@ -20,9 +37,11 @@ export default defineComponent({
     const { totalCountLoop, pateeLength } = reactifyObject(props);
 
     // ? sound
-    const clickSound = useAudio('/audio/mixkit-mouse-click-close-1113.mp3');
+    const clickSound = useAudio(
+      isProd ? audioUrls.clickSound.prod : audioUrls.clickSound.dev,
+    );
     const finishClickSound = useAudio(
-      '/audio/mixkit-positive-interface-click-1112.mp3',
+      isProd ? audioUrls.finishSound.prod : audioUrls.finishSound.dev,
     );
 
     // ? counters

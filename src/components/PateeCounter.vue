@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, watch } from '@vue/composition-api';
+import { defineComponent, watch, watchEffect } from '@vue/composition-api';
 import { reactifyObject, useCounter } from '@vueuse/core';
 
 import useAudio from '@/lib/useAudio';
@@ -36,14 +36,6 @@ export default defineComponent({
     // ? props
     const { totalCountLoop, pateeLength } = reactifyObject(props);
 
-    // ? sound
-    const clickSound = useAudio(
-      isProd ? audioUrls.clickSound.prod : audioUrls.clickSound.dev,
-    );
-    const finishClickSound = useAudio(
-      isProd ? audioUrls.finishSound.prod : audioUrls.finishSound.dev,
-    );
-
     // ? counters
     const { count: currentLoop, inc: incCurrentLoop } = useCounter();
     const {
@@ -53,21 +45,32 @@ export default defineComponent({
       reset: resetCount,
     } = useCounter();
 
-    // * reset counter
-    watch(count, newCount => {
-      if (newCount === pateeLength) {
+    // ? sound
+    const clickSound = useAudio(
+      isProd ? audioUrls.clickSound.prod : audioUrls.clickSound.dev,
+    );
+    const finishClickSound = useAudio(
+      isProd ? audioUrls.finishSound.prod : audioUrls.finishSound.dev,
+    );
+
+    watchEffect(() => {
+      // * reset counter
+      if (count.value === pateeLength) {
         setCount(0);
         incCurrentLoop();
       }
-    });
 
-    // * when done
-    watch(currentLoop, newCurrentLoop => {
-      if (newCurrentLoop === totalCountLoop) {
+      // * when done
+      if (currentLoop.value === totalCountLoop) {
         resetCount();
         emit('done');
       }
     });
+    // watch(count, newCount => {
+    // });
+
+    // watch(currentLoop, newCurrentLoop => {
+    // });
 
     function clickHandler() {
       if (currentLoop.value < totalCountLoop) {

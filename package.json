@@ -12,6 +12,7 @@
     "@vue/composition-api": "^1.0.0-rc.2",
     "@vueuse/core": "^4.3.1",
     "core-js": "^3.6.5",
+    "howler": "^2.2.1",
     "v-wave": "^1.2.8",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss7-compat": "^2.0.3",
+    "@types/howler": "^2.2.1",
     "@types/jest": "^24.0.19",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",

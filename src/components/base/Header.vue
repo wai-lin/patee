@@ -1,6 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent } from '@vue/composition-api';
-import { reactifyObject } from '@vueuse/core';
+import { computed, defineComponent, toRefs } from '@vue/composition-api';
 
 import BaseButton from './Button.vue';
 import BaseIcon from './Icon.vue';
@@ -19,10 +18,10 @@ export default defineComponent({
     // ? root ctx
     const { $router } = root;
     // ? props
-    const { sticky } = reactifyObject(props);
+    const { sticky } = toRefs(props);
 
     const stickyClassNames = computed(() =>
-      sticky ? 'fixed top-0 inset-x-0 bg-white z-10' : '',
+      sticky.value ? 'fixed top-0 inset-x-0 bg-white z-10' : '',
     );
 
     function backToRoute() {

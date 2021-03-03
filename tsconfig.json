@@ -16,7 +16,8 @@
       "jest",
       "@vue/composition-api",
       "@vueuse/core",
-      "vue-scrollto"
+      "vue-scrollto",
+      "@types/howler"
     ],
     "paths": {
       "@/*": ["src/*"]

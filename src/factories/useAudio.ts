@@ -5,15 +5,21 @@ import { Howl } from 'howler';
  * @returns audio, play
  */
 export default function useAudio(audioPath: string) {
-  const audio = new Howl({ src: [audioPath] });
+  const audio = new Howl({ src: [audioPath], preload: true, html5: true });
 
   function play() {
     if (!audio) return;
     audio.play();
   }
 
+  function stop() {
+    if (!audio) return;
+    audio.stop();
+  }
+
   return {
     audio,
     play,
+    stop,
   };
 }

@@ -1,8 +1,8 @@
 <script lang="ts">
-import { defineComponent, watch, watchEffect } from '@vue/composition-api';
+import { defineComponent, watch } from '@vue/composition-api';
 import { reactifyObject, useCounter } from '@vueuse/core';
 
-import useAudio from '@/lib/useAudio';
+import useAudio from '@/factories/useAudio';
 import en2mmNum from '@/lib/en2mmNum';
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -37,13 +37,8 @@ export default defineComponent({
     const { totalCountLoop, pateeLength } = reactifyObject(props);
 
     // ? counters
-    const { count: currentLoop, inc: incCurrentLoop } = useCounter();
-    const {
-      count,
-      inc: incCount,
-      set: setCount,
-      reset: resetCount,
-    } = useCounter();
+    const loopCount = useCounter();
+    const tallyCount = useCounter();
 
     // ? sound
     const clickSound = useAudio(
@@ -53,35 +48,33 @@ export default defineComponent({
       isProd ? audioUrls.finishSound.prod : audioUrls.finishSound.dev,
     );
 
-    watchEffect(() => {
-      // * reset counter
-      if (count.value === pateeLength) {
-        setCount(0);
-        incCurrentLoop();
+    // * reset counter
+    watch(tallyCount.count, () => {
+      if (tallyCount.get() === pateeLength) {
+        tallyCount.set(0);
+        loopCount.inc();
       }
+    });
 
-      // * when done
-      if (currentLoop.value === totalCountLoop) {
-        resetCount();
+    // * when done
+    watch(loopCount.count, () => {
+      if (loopCount.get() === totalCountLoop) {
         emit('done');
       }
     });
-    // watch(count, newCount => {
-    // });
-
-    // watch(currentLoop, newCurrentLoop => {
-    // });
 
     function clickHandler() {
-      if (currentLoop.value < totalCountLoop) {
-        incCount();
+      if (loopCount.get() < totalCountLoop) {
+        clickSound.stop();
+        tallyCount.inc();
         clickSound.play();
         return;
       }
+      finishClickSound.stop();
       finishClickSound.play();
     }
 
-    return { currentLoop, count, clickHandler };
+    return { loopCount, tallyCount, clickHandler };
   },
 });
 </script>
@@ -89,7 +82,7 @@ export default defineComponent({
 <template>
   <div class="flex flex-col justify-center items-center">
     <p class="my-4 text-center text-red-700 font-bold">
-      အပတ်စဉ် {{ en2mmNum(currentLoop) }}
+      အပတ်စဉ် {{ en2mmNum(loopCount.get()) }}
     </p>
     <div
       class="select-none cursor-pointer rounded-lg grid place-items-center"
@@ -97,7 +90,11 @@ export default defineComponent({
       v-ripple
       @click="clickHandler"
     >
-      {{ currentLoop === totalCountLoop ? 'ပြီးပါပြီ' : en2mmNum(count) }}
+      {{
+        loopCount.get() === totalCountLoop
+          ? 'ပြီးပါပြီ'
+          : en2mmNum(tallyCount.get())
+      }}
     </div>
   </div>
 </template>

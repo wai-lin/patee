@@ -6,6 +6,8 @@ import BaseButton from '@/components/base/Button.vue';
 import BaseIcon from '@/components/base/Icon.vue';
 import PateeListItem from '@/components/PateeListItem.vue';
 
+import usePateeProgressStorage from '@/factories/usePateeProgressStorage';
+
 import en2mmNum from '@/lib/en2mmNum';
 
 import data from '@/data';
@@ -24,10 +26,13 @@ export default defineComponent({
   setup(_props, { root }) {
     const { $route, $router } = root;
 
+    const currentPatee = $route.params.patee as keyof typeof data;
+
     const patee = computed(() => {
-      const keyOfPatee = $route.params.patee;
-      return data[keyOfPatee as keyof typeof data];
+      return data[currentPatee];
     });
+
+    const pateeProgress = usePateeProgressStorage(currentPatee);
 
     type ITEM = typeof patee.value.steps[0][0];
 
@@ -37,6 +42,7 @@ export default defineComponent({
 
     return {
       patee,
+      pateeProgress,
       listItemClickHander,
     };
   },
@@ -47,7 +53,7 @@ export default defineComponent({
   <div>
     <base-header :title="patee.title[1]" sticky>
       <template #postfix>
-        <base-button v-ripple circle>
+        <base-button v-ripple circle @click="pateeProgress.remove()">
           <base-icon class="text-red-500" icon-name="refresh" size="lg" />
         </base-button>
       </template>
@@ -70,7 +76,7 @@ export default defineComponent({
         v-for="sItem in s"
         :key="`${sItem.step}-${sItem.day}-${sItem.dayOfWeek}`"
         @click="listItemClickHander(sItem)"
-        :is-finished="false"
+        :is-finished="pateeProgress.isInclude(sItem.step, sItem.day)"
         :day="sItem.day"
         :title="sItem.title"
         :count-loop="sItem.countLoop"

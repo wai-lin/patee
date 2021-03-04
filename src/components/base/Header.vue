@@ -34,24 +34,23 @@ export default defineComponent({
 </script>
 
 <template>
-  <nav
-    class="grid grid-cols-5 w-full h-20 border-b border-red-500"
-    :class="stickyClassNames"
-  >
-    <div class="col-span-1 grid place-items-center">
-      <slot name="prefix">
-        <base-button v-ripple circle @click="backToRoute">
-          <base-icon class="text-red-500" icon-name="arrow_back" size="lg" />
-        </base-button>
-      </slot>
-    </div>
-    <div class="col-span-3 grid place-items-center">
-      <slot v-bind:title="title">
-        <h2 class="text-2xl text-center font-bold">{{ title }}</h2>
-      </slot>
-    </div>
-    <div class="col-span-1 grid place-items-center">
-      <slot name="postfix"></slot>
-    </div>
-  </nav>
+  <div class="border-b border-red-500 h-20" :class="stickyClassNames">
+    <nav class="grid grid-cols-5 w-full h-full max-w-screen-sm mx-auto">
+      <div class="col-span-1 grid place-items-center">
+        <slot name="prefix">
+          <base-button v-ripple circle @click="backToRoute">
+            <base-icon class="text-red-500" icon-name="arrow_back" size="lg" />
+          </base-button>
+        </slot>
+      </div>
+      <div class="col-span-3 grid place-items-center">
+        <slot v-bind:title="title">
+          <h2 class="text-2xl text-center font-bold">{{ title }}</h2>
+        </slot>
+      </div>
+      <div class="col-span-1 grid place-items-center">
+        <slot name="postfix"></slot>
+      </div>
+    </nav>
+  </div>
 </template>

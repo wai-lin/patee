@@ -285,7 +285,7 @@ export const steps = [
     {
       step: 4,
       day: 2,
-      title: 'ဝိစ္စာစရဏ သမ္ပန္နော',
+      title: 'ဝိဇ္ဇာစရဏ သမ္ပန္နော',
       countLoop: 3,
       isVegetarianDay: false,
       dayOfWeek: 'monday',
